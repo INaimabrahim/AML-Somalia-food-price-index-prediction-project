@@ -1,0 +1,10 @@
+.git
+.venv
+venv
+.devcontainer
+**/__pycache__
+*.pyc
+*.ipynb
+*.xlsx
+*.log
+README.md

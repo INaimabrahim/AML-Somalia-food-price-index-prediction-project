@@ -1,0 +1,24 @@
+services:
+  dashboard:
+    build: .
+    image: somalia-food-security:latest
+    container_name: somalia-food-security
+    ports:
+      - "${PORT:-8501}:8501"
+    restart: unless-stopped
+
+  api:
+    image: somalia-food-security:latest
+    container_name: somalia-food-security-api
+    depends_on:
+      - dashboard   # reuses the image the dashboard service builds
+    command: ["uvicorn", "api:app", "--app-dir", "System/App", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=3).status == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    restart: unless-stopped
